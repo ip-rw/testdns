@@ -4,13 +4,13 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"github.com/ip-rw/testdns/pkg/dns"
 	"github.com/phuslu/fastdns"
 	"github.com/sirupsen/logrus"
 	"net"
 	"os"
 	"strings"
 	"sync"
-	"testdns/pkg/dns"
 	"time"
 )
 
@@ -96,7 +96,7 @@ func main() {
 				logrus.Warnf("%s didn't match (%s != %s)", formatResult(result), formatIPs(trusted.Answer), formatIPs(result.Answer))
 			}
 		}
-		if *invert {
+		if !*invert {
 			display = !display
 		}
 		if display {
