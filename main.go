@@ -43,7 +43,7 @@ var (
 	workers  = flag.Int("w", 25, "workers")
 	hostname = flag.String("n", "test-12-34-56-78.nip.io", "hostname to resolve")
 	invert   = flag.Bool("v", false, "invert output, show misbehaving servers")
-	silent   = flag.Bool("s", true, "don't show response time.")
+	silent   = flag.Bool("s", false, "don't show response time.")
 	trusted  = flag.String("r", "1.1.1.1:53", "trusted resolver")
 	timeout  = flag.Duration("t", 2*time.Second, "timeout")
 )
@@ -54,8 +54,10 @@ func init() {
 		logrus.Errorln("please specify hostname")
 		os.Exit(1)
 	}
+
+	logrus.SetLevel(logrus.DebugLevel)
 	if *silent {
-		logrus.SetLevel(logrus.DebugLevel)
+		logrus.SetLevel(logrus.InfoLevel)
 	}
 }
 
@@ -96,7 +98,7 @@ func main() {
 				logrus.Warnf("%s didn't match (%s != %s)", formatResult(result), formatIPs(trusted.Answer), formatIPs(result.Answer))
 			}
 		}
-		if !*invert {
+		if *invert {
 			display = !display
 		}
 		if display {
@@ -115,8 +117,8 @@ func formatIPs(ips []net.IP) string {
 
 func formatResult(result *dns.Result) string {
 	if *silent {
-		return fmt.Sprintf("%s\t%d", result.Server, result.Time.Milliseconds())
-	} else {
 		return result.Server
+	} else {
+		return fmt.Sprintf("%s\t%d", result.Server, result.Time.Milliseconds())
 	}
 }
