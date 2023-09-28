@@ -45,7 +45,7 @@ var (
 	invert   = flag.Bool("v", false, "invert output, show misbehaving servers")
 	silent   = flag.Bool("s", false, "don't show response time.")
 	trusted  = flag.String("r", "1.1.1.1:53", "trusted resolver")
-	timeout  = flag.Duration("t", 2*time.Second, "timeout")
+	timeout  = flag.Duration("t", 1*time.Second, "timeout")
 )
 
 func init() {
@@ -89,14 +89,14 @@ func main() {
 
 	for result := range resultChan {
 		if result.Error != nil {
-			//logrus.Debugln(result.Server, result.Error)
+			logrus.Debugln(result.Server, result.Error)
 			continue
 		}
 		display := result.Matches(trusted)
 		if !display {
-			if result.Error == nil {
-				logrus.Warnf("%s didn't match (%s != %s)", formatResult(result), formatIPs(trusted.Answer), formatIPs(result.Answer))
-			}
+			//if result.Error == nil {
+			logrus.Warnf("%s didn't match (%s != %s)", formatResult(result), formatIPs(trusted.Answer), formatIPs(result.Answer))
+			//}
 		}
 		if *invert {
 			display = !display
